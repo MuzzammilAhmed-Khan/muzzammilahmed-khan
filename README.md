@@ -1,20 +1,5 @@
 ### Hi there 👋
 
-<!--
-**MuzzammilAhmed-Khan/muzzammilahmed-khan** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-
-Here are some ideas to get you started:
-
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
-
 Just a guy trying to get in tune the code part of the world.
 
 I currently have experience in Java, Spring, MySQL, and Angular (will keep adding more here as I learn new tech).
@@ -35,7 +20,14 @@ Technologies that I want to learn (not necessarily in this order):
 11. Flutter
 12. Nodejs - The Odin Project
 13. Python
+14. JavaScript
 
 Technologies I'm currently working on:
 1. Docker and Kubernetes -- [Learning source](https://youtu.be/Wf2eSG3owoA)
+
+Projects: 
+1. Issue Tracker -- Angular, Spring MVC , Hibernate, and  MySql
+2. Weather app -- Spring Boot , Hibernate, and MongoDB
+3. Music Player
+4. Photo Gallery
 
