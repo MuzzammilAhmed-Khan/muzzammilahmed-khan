@@ -500,28 +500,32 @@ library still   : 6 songs  &lt;-- aggregation, not
 
   <h2 id="the-two-designs-side-by-side"><span class="num">10</span> The two designs, side by side</h2>
 
-  <p>This is the payoff. Read down the last column: almost everything is the same, and the one
-  thing that differs, differs for a reason you can now state in a sentence.</p>
+  <p>This is the payoff. Read down the <strong>verdict</strong> column: almost everything is the
+  same, and the one thing that differs, differs for a reason you can now state in a sentence.</p>
 
   <div class="table-wrap">
-  <table>
-    <thead><tr><th>Design idea</th><th>Deck of Cards</th><th>Up Next queue</th><th></th></tr></thead>
+  <table class="compare">
+    <thead><tr><th>Design idea</th><th>Verdict</th><th>Deck of Cards</th><th>Up Next queue</th></tr></thead>
     <tbody>
-      <tr><td>Value object</td><td><code>Card(suit, rank)</code></td><td><code>Song(title, artist, genre, seconds)</code></td><td>same</td></tr>
-      <tr><td>Enum carrying data</td><td><code>Suit(symbol, colour)</code></td><td><code>Genre(label, energy)</code></td><td>same</td></tr>
-      <tr><td>The collection holder</td><td><code>Deck</code></td><td><code>PlayQueue</code></td><td>same</td></tr>
-      <tr><td>Born through</td><td><code>Deck.standard52()</code></td><td><code>PlayQueue.of(...)</code></td><td>same</td></tr>
-      <tr><td>The swappable seam</td><td><code>Shuffler</code></td><td><code>Shuffler</code></td><td>same</td></tr>
-      <tr><td>Consume one</td><td><code>deal()</code> &mdash; from the end</td><td><code>playNext()</code> &mdash; from the front</td><td>same idea</td></tr>
-      <tr><td>Guard rail</td><td>deal on empty throws</td><td>play on empty throws</td><td>same</td></tr>
-      <tr><td>Read-only view</td><td><code>cards()</code></td><td><code>songs()</code></td><td>same</td></tr>
-      <tr>
+      <tr><td>Value object</td><td class="v-same">same</td><td><code>Card(suit, rank)</code></td><td><code>Song(title, artist, genre, seconds)</code></td></tr>
+      <tr><td>Enum carrying data</td><td class="v-same">same</td><td><code>Suit(symbol, colour)</code></td><td><code>Genre(label, energy)</code></td></tr>
+      <tr><td>The collection holder</td><td class="v-same">same</td><td><code>Deck</code></td><td><code>PlayQueue</code></td></tr>
+      <tr><td>Born through</td><td class="v-same">same</td><td><code>Deck.standard52()</code></td><td><code>PlayQueue.of(...)</code></td></tr>
+      <tr><td>The swappable seam</td><td class="v-same">same</td><td><code>Shuffler</code></td><td><code>Shuffler</code></td></tr>
+      <tr><td>Consume one</td><td class="v-same">same idea</td><td><code>deal()</code> &mdash; from the end</td><td><code>playNext()</code> &mdash; from the front</td></tr>
+      <tr><td>Guard rail</td><td class="v-same">same</td><td>deal on empty throws</td><td>play on empty throws</td></tr>
+      <tr><td>Read-only view</td><td class="v-same">same</td><td><code>cards()</code></td><td><code>songs()</code></td></tr>
+      <tr class="row-diff">
         <td><strong>Ownership</strong></td>
+        <td class="v-diff">different</td>
         <td><strong>composition</strong> &mdash; creates its cards</td>
         <td><strong>aggregation</strong> &mdash; borrows its songs</td>
-        <td><strong>different</strong></td>
       </tr>
-      <tr><td>Identity uses</td><td>every field</td><td>title + artist only</td><td><strong>different</strong></td>
+      <tr class="row-diff">
+        <td><strong>Identity uses</strong></td>
+        <td class="v-diff">different</td>
+        <td>every field</td>
+        <td>title + artist only</td>
       </tr>
     </tbody>
   </table>

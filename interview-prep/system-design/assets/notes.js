@@ -148,6 +148,29 @@
     };
   }
 
+  // A diagram wider than its column pans sideways. Say so, rather than
+  // leaving a phone reader to discover half a diagram by accident.
+  function markPannable(nodes) {
+    nodes.forEach(function (el) {
+      var pannable = el.scrollWidth > el.clientWidth + 2;
+      var fig = el.closest(".diagram");
+      if (!fig) return;
+      fig.setAttribute("data-pannable", pannable ? "true" : "false");
+
+      var head = fig.querySelector(".code-head");
+      if (!head) return;
+      var hint = head.querySelector(".pan-hint");
+      if (pannable && !hint) {
+        hint = document.createElement("span");
+        hint.className = "pan-hint";
+        hint.textContent = "↔ drag sideways";
+        head.appendChild(hint);
+      } else if (!pannable && hint) {
+        hint.remove();
+      }
+    });
+  }
+
   function renderDiagrams() {
     var nodes = collectDiagrams();
     if (!nodes.length) return;
@@ -180,13 +203,14 @@
         securityLevel: "loose",
         theme: "base",
         themeVariables: mermaidThemeVars(),
-        class: { useMaxWidth: true },
-        flowchart: { useMaxWidth: true, curve: "basis" },
-        sequence: { useMaxWidth: true }
+        class: { useMaxWidth: false },
+        flowchart: { useMaxWidth: false, curve: "basis" },
+        sequence: { useMaxWidth: false }
       });
       var out = window.mermaid.run({ nodes: nodes, suppressErrors: true });
       var done = function () {
         nodes.forEach(function (el) { el.setAttribute("data-state", "ready"); });
+        markPannable(nodes);
       };
       if (out && typeof out.then === "function") { out.then(done, done); } else { done(); }
     } catch (e) {
@@ -469,6 +493,13 @@
     var nodes = collectDiagrams();
     addSourceToggles(nodes);
     renderDiagrams();
+
+    // Rotating a phone changes whether a diagram still overflows.
+    var resizeTimer;
+    window.addEventListener("resize", function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () { markPannable(collectDiagrams()); }, 200);
+    });
 
     // Follow the OS if the user has not pinned a theme.
     if (window.matchMedia) {

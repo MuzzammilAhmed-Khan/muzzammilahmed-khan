@@ -458,12 +458,38 @@ code {
   color: var(--text-3);
   background: var(--surface-2);
 }
+/* Diagrams keep their natural size and pan sideways instead of scaling to
+   fit. Shrink-to-fit looks tidy on a desktop and is useless on a phone: a
+   700px class diagram squeezed into 317px renders its labels at ~6px. */
 .mermaid {
   padding: 1.25rem .75rem;
   text-align: center;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
 }
-.mermaid svg { max-width: 100%; height: auto; }
+.mermaid svg { height: auto; }
+
+.pan-hint {
+  color: var(--accent);
+  font-weight: 600;
+  white-space: nowrap;
+}
+@media (min-width: 700px) {
+  .pan-hint { font-weight: 500; color: var(--text-3); }
+}
+
+/* Prose is capped at 72ch for readability, but a diagram is not prose. On a
+   wide screen let it spill into the gutter that the text column leaves
+   unused, rather than scrolling inside a narrow box for the sake of 40px.
+   The vw term keeps it clear of the sticky TOC rail at every width. */
+@media (min-width: 1040px) {
+  .diagram {
+    width: max-content;
+    min-width: 100%;
+    max-width: min(880px, calc(100vw - 21rem));
+  }
+}
 .mermaid[data-state="pending"],
 .mermaid[data-state="failed"] {
   color: var(--text-3);
@@ -659,6 +685,19 @@ th {
   white-space: nowrap;
 }
 tbody tr:hover { background: var(--surface-2); }
+
+/* Comparison tables: the verdict sits in column 2, not last, so the column
+   the table exists for survives a narrow screen without scrolling. */
+.compare td.v-same,
+.compare td.v-diff {
+  font-size: .78rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.compare td.v-same { color: var(--text-3); }
+.compare td.v-diff { color: var(--accent); }
+.compare tr.row-diff { background: var(--accent-soft); }
+.compare tr.row-diff:hover { background: var(--accent-soft); }
 
 /* ---------- on-page TOC ---------- */
 
