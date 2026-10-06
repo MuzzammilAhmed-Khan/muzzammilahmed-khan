@@ -31,3 +31,11 @@ Projects:
 3. Music Player
 4. Photo Gallery
 
+
+---
+
+### Notes
+
+I write up what I am learning as static pages, hosted from this repo:
+
+- **[Low-level design](https://muzzammilahmed-khan.github.io/muzzammilahmed-khan/interview-prep/system-design/)** — LLD in Java, bottom up: the nine-step design pipeline, UML, SOLID, patterns and full problems. Source in [`interview-prep/system-design/`](interview-prep/system-design/).

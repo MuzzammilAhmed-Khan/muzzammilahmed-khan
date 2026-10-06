@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLD Notes</title>
+<link rel="stylesheet" href="assets/notes.css">
+</head>
+<body>
+
+<nav class="topbar">
+  <a class="home" href="index.html">LLD notes</a>
+  <span class="crumb">Low-level design &middot; Java</span>
+  <span class="spacer"></span>
+  <button class="iconbtn" data-theme-toggle type="button">&#9675; Dark</button>
+</nav>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">Interview prep</div>
+    <h1>Low-level design</h1>
+    <p>Learning LLD from the bottom up in Java &mdash; taught one brick at a time, drilled until it
+    sticks, and written down here as I go. Mastery-gated, not calendar-gated: nothing moves forward
+    until the gate on the current topic is clear.</p>
+  </header>
+
+  <div class="searchwrap">
+    <input type="search" id="topicSearch" placeholder="Filter topics&hellip;  (press / )" autocomplete="off">
+  </div>
+  <p class="search-empty">No topic matches that.</p>
+
+  <section class="module">
+    <header>
+      <span class="mnum">00</span>
+      <h2 id="overview">Overview</h2>
+      <span class="mnote">The whole pipeline, once, end to end &mdash; so every later topic has an address. Two worked examples, same nine steps; read either, or both.</span>
+    </header>
+    <ul class="topics">
+      <li>
+        <a href="00-overview/lld-process-map.html">
+          <span class="tname">The LLD pipeline <span class="tnote">&mdash; worked example: Deck of Cards</span></span>
+          <span class="chip chip-learning">Taught</span>
+        </a>
+      </li>
+      <li>
+        <a href="00-overview/music-queue.html">
+          <span class="tname">The same pipeline, in music <span class="tnote">&mdash; worked example: the Up Next queue</span></span>
+          <span class="chip chip-learning">Taught</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section class="module">
+    <header>
+      <span class="mnum">01</span>
+      <h2 id="java-for-design">Java for design</h2>
+      <span class="mnote">Primers, pulled in exactly where a design topic needs them. Not a Java course.</span>
+    </header>
+    <ul class="topics">
+      <li><span class="pending"><span class="tname">interface vs abstract class</span><span class="chip chip-todo">Next up</span></span></li>
+      <li><span class="pending"><span class="tname">enums with fields and methods</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">generics, enough to model with</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">collections: choosing List vs Set vs Map</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">equals and hashCode</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">immutability, final, and defensive copies</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">Comparable vs Comparator</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">Optional instead of null</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">records: the shorthand, once the longhand is drilled</span><span class="chip chip-todo">Not started</span></span></li>
+    </ul>
+  </section>
+
+  <section class="module">
+    <header>
+      <span class="mnum">02</span>
+      <h2 id="uml-and-mermaid-notation">UML and Mermaid notation</h2>
+      <span class="mnote">The semantics are the skill and they are medium-independent. Mermaid is just the keyboard.</span>
+    </header>
+    <ul class="topics">
+      <li><span class="pending"><span class="tname">the class box: visibility, types, static, abstract</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">association</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">aggregation vs composition</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">inheritance and realisation</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">dependency, and why it is the weakest line</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">multiplicity</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">reading somebody else&rsquo;s diagram</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">sequence diagrams, lightly &mdash; for flows</span><span class="chip chip-todo">Not started</span></span></li>
+    </ul>
+  </section>
+
+  <section class="module">
+    <header>
+      <span class="mnum">03</span>
+      <h2 id="class-modeling">Class modeling</h2>
+      <span class="mnote">Getting from a vague sentence to a defensible set of classes. Steps 1&ndash;4 of the pipeline.</span>
+    </header>
+    <ul class="topics">
+      <li><span class="pending"><span class="tname">the clarifying questions worth asking</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">noun extraction</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">class vs attribute vs enum vs noise</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">the one-sentence responsibility test</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">naming things</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">entity vs service vs controller</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">when not to make a class</span><span class="chip chip-todo">Not started</span></span></li>
+    </ul>
+  </section>
+
+  <section class="module">
+    <header>
+      <span class="mnum">04</span>
+      <h2 id="relationships-and-object-modeling">Relationships and object modeling</h2>
+      <span class="mnote">Step 5 of the pipeline, where the real decisions hide.</span>
+    </header>
+    <ul class="topics">
+      <li><span class="pending"><span class="tname">has-a vs is-a</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">composition over inheritance</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">bidirectional links and who owns them</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">the interface as a seam</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">enums vs class hierarchies for variants</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">who holds state, who holds behaviour</span><span class="chip chip-todo">Not started</span></span></li>
+    </ul>
+  </section>
+
+  <section class="module">
+    <header>
+      <span class="mnum">05</span>
+      <h2 id="solid">SOLID</h2>
+      <span class="mnote">Each one taught through a broken design you repair, then drilled on spotting it in unfamiliar code.</span>
+    </header>
+    <ul class="topics">
+      <li><span class="pending"><span class="tname">S &mdash; Single Responsibility</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">O &mdash; Open/Closed</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">L &mdash; Liskov Substitution</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">I &mdash; Interface Segregation</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">D &mdash; Dependency Inversion</span><span class="chip chip-todo">Not started</span></span></li>
+    </ul>
+  </section>
+
+  <section class="module">
+    <header>
+      <span class="mnum">06</span>
+      <h2 id="design-patterns">Design patterns</h2>
+      <span class="mnote">Problem first, pattern second &mdash; never the reverse. Only the ones LLD actually uses.</span>
+    </header>
+    <ul class="topics">
+      <li><span class="pending"><span class="tname">Creational &mdash; Factory Method, Abstract Factory, Builder, Singleton (and why it is a trap), Prototype</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">Structural &mdash; Adapter, Decorator, Composite, Facade, Proxy, Bridge, Flyweight</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">Behavioural &mdash; Strategy, Observer, State, Command, Template Method, Chain of Responsibility, Iterator, Mediator, Visitor</span><span class="chip chip-todo">Not started</span></span></li>
+    </ul>
+  </section>
+
+  <section class="module">
+    <header>
+      <span class="mnum">07</span>
+      <h2 id="full-problems">Full problems</h2>
+      <span class="mnote">Complete pipeline runs with you driving. From here, every design drill starts with a 3-minute paper sketch.</span>
+    </header>
+    <ul class="topics">
+      <li><span class="pending"><span class="tname">Deck of Cards &mdash; revisited, by you</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">Vending Machine</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">Parking Lot</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">Elevator</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">Tic-Tac-Toe</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">Snake and Ladder</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">Splitwise</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">Library Management</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">Logging Framework</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">Rate Limiter</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">LRU Cache</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">Chess</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">Food Delivery</span><span class="chip chip-todo">Not started</span></span></li>
+      <li><span class="pending"><span class="tname">BookMyShow</span><span class="chip chip-todo">Not started</span></span></li>
+    </ul>
+  </section>
+
+  <h2 id="how-sessions-run">How a session runs</h2>
+
+  <ol class="steps">
+    <li>
+      <span class="step-name">Warm-up re-quiz</span>
+      Three to five questions pulled from earlier topics&rsquo; drill archives &mdash; yesterday&rsquo;s
+      topic, last week&rsquo;s, and one older one at random.
+    </li>
+    <li>
+      <span class="step-name">Micro-lesson</span>
+      One idea. Small enough to teach in a few minutes.
+    </li>
+    <li>
+      <span class="step-name">Drill ladder</span>
+      Many questions per rung, and no climbing until the rung is clean:
+      <strong>recognition</strong> &rarr; <strong>recall</strong> &rarr; <strong>produce</strong>
+      &rarr; <strong>translate</strong> (Mermaid &harr; Java) &rarr; <strong>apply</strong>
+      &rarr; <strong>critique</strong> &rarr; <strong>explain why</strong>.
+    </li>
+    <li>
+      <span class="step-name">Compile-and-run checkpoint</span>
+      Wherever runtime behaviour is the actual lesson, the code gets compiled with JDK 17 and run.
+    </li>
+    <li>
+      <span class="step-name">Notes get written</span>
+      The topic page gains today&rsquo;s concept, diagram, snippet, runnable file and the full drill
+      archive with answers.
+    </li>
+  </ol>
+
+  <h2 id="mastery-gate">The mastery gate</h2>
+
+  <p>All four, or the topic does not move:</p>
+
+  <div class="gate">
+    <h3>Per topic</h3>
+    <ul>
+      <li><input type="checkbox" id="g1"><label for="g1">Five consecutive drills correct, including at least one <strong>explain-why</strong></label></li>
+      <li><input type="checkbox" id="g2"><label for="g2">You produce the Mermaid diagram unaided</label></li>
+      <li><input type="checkbox" id="g3"><label for="g3">You write code for it that compiles and runs in one or two tries</label></li>
+      <li><input type="checkbox" id="g4"><label for="g4">You can state when <strong>not</strong> to use it</label></li>
+    </ul>
+    <p class="gate-state"></p>
+  </div>
+
+  <p class="muted">A gate that fails twice is a signal the step was too big. The step gets split and
+  re-drilled smaller &mdash; that is the system working, not you failing.</p>
+
+  <div class="footer">
+    <p><strong>Java 17</strong> &mdash; <code>JAVA_HOME</code> is already JDK 17; note that
+    <code>java</code> on <code>PATH</code> resolves to an older JDK 11, so compile commands pin
+    17 explicitly.</p>
+    <p>Diagrams render from a vendored <code>assets/mermaid.min.js</code>, so these pages work
+    offline with no build step and no server. Progress of record lives in <code>PROGRESS.md</code>;
+    the checkboxes here are a convenience that your browser remembers.</p>
+  </div>
+
+</div>
+
+<script src="assets/mermaid.min.js"></script>
+<script src="assets/notes.js"></script>
+</body>
+</html>

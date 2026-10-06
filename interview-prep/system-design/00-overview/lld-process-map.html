@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The LLD Pipeline</title>
+<link rel="stylesheet" href="../assets/notes.css">
+</head>
+<body>
+
+<nav class="topbar">
+  <a class="home" href="../index.html">&#8592; LLD notes</a>
+  <span class="crumb">00 &middot; Overview &rsaquo; The LLD pipeline</span>
+  <span class="spacer"></span>
+  <button class="iconbtn" data-theme-toggle type="button">&#9675; Dark</button>
+</nav>
+
+<div class="wrap topic-layout">
+<main class="content">
+
+  <header class="page-head">
+    <div class="eyebrow">Module 00 &middot; Overview</div>
+    <h1>The LLD pipeline</h1>
+    <div class="meta-row">
+      <span class="chip chip-learning">Taught &middot; not drilled</span>
+      <span>Session 1 &middot; 2026-10-05</span>
+      <span>Worked example: Design a Deck of Cards</span>
+    </div>
+  </header>
+
+  <div class="lede">
+    <p>Every low-level design problem you will ever be handed is the same nine steps in the same
+    order. The steps are not the hard part &mdash; each one is small. The hard part is that nobody
+    tells you they exist, so you improvise, and improvising under interview pressure produces a
+    pile of classes nobody can defend.</p>
+    <p>This page is the map. It exists so that every later topic has an address: when you learn
+    composition, you will know it lives in step 5.</p>
+  </div>
+
+  <div class="callout callout-key">
+    <span class="label">How to use this page</span>
+    <p>Read it once, end to end, without trying to memorise anything. You are not being drilled
+    today. The goal is only that you can answer <em>&ldquo;what are we even doing?&rdquo;</em> before
+    we start doing it one brick at a time.</p>
+  </div>
+
+  <div class="callout callout-warn">
+    <span class="label">Never played cards?</span>
+    <p>Then this example will fight you, and the fight is not the lesson. The same nine steps are
+    run on something you have definitely used &mdash; the <strong>Up Next queue in a music app</strong>
+    &mdash; over on <a href="music-queue.html">the same pipeline, in music</a>. Nothing here is
+    required reading first.</p>
+    <p>If you do read both, read that one second: it ends with the two designs side by side, and
+    the one relationship where they disagree is worth more than either example alone.</p>
+  </div>
+
+  <h2 id="the-nine-steps"><span class="num">01</span> The nine steps</h2>
+
+  <p>Learn the shape first. The parenthetical is the question the step answers.</p>
+
+  <ol class="steps">
+    <li>
+      <span class="step-name">Clarify the requirements <span class="ask">&mdash; what am I actually building?</span></span>
+      Ask until the problem is bounded. Write down what is in scope and, more importantly, what is out.
+    </li>
+    <li>
+      <span class="step-name">Extract the nouns <span class="ask">&mdash; what things are being talked about?</span></span>
+      Harvest every noun from the statement and from your own clarifying answers. Do not judge them yet.
+    </li>
+    <li>
+      <span class="step-name">Filter the nouns <span class="ask">&mdash; which of these are really classes?</span></span>
+      Each noun is a class, an attribute, an enum, or noise. Most are not classes. This is where
+      beginners create fifteen classes for a problem that needs five.
+    </li>
+    <li>
+      <span class="step-name">Assign one responsibility each <span class="ask">&mdash; what is this class for?</span></span>
+      One sentence per class, in the first person. If you need the word &ldquo;and&rdquo; twice, you
+      have two classes.
+    </li>
+    <li>
+      <span class="step-name">Find the relationships <span class="ask">&mdash; who holds whom, and how tightly?</span></span>
+      Owns, references, or merely uses. This step is where most of the real design decisions hide.
+    </li>
+    <li>
+      <span class="step-name">Draw it <span class="ask">&mdash; does the whole thing hang together?</span></span>
+      A diagram makes a bad design look bad. That is its entire job.
+    </li>
+    <li>
+      <span class="step-name">Code it <span class="ask">&mdash; do the signatures actually work?</span></span>
+      Write the classes. Half of all design mistakes only become visible when you try to type the
+      method signature.
+    </li>
+    <li>
+      <span class="step-name">Run it <span class="ask">&mdash; does it behave?</span></span>
+      In an interview this is a dry run on paper. On your own machine it is <code>javac</code>.
+    </li>
+    <li>
+      <span class="step-name">Critique it <span class="ask">&mdash; where will this break?</span></span>
+      Name the weaknesses yourself. In an interview, doing this unprompted is the single strongest
+      signal you can send.
+    </li>
+  </ol>
+
+  <div class="callout callout-warn">
+    <span class="label">The one rule</span>
+    <p>Steps 1 to 5 happen before you write a single line of code. The most common way to fail an
+    LLD interview is to start at step 7.</p>
+  </div>
+
+  <h2 id="step1-clarify-the-requirements"><span class="num">02</span> Step 1 &mdash; Clarify the requirements</h2>
+
+  <p>The prompt was three words: <strong>&ldquo;Design a deck of cards.&rdquo;</strong> That is not
+  a specification, it is an invitation to ask questions. Here are the ones worth asking, and the
+  answers I am going to assume:</p>
+
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>Question</th><th>Answer I will design to</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Standard 52-card deck, or jokers / multiple packs / custom decks?</td><td>Standard 52. No jokers.</td></tr>
+      <tr><td>Does dealing <em>remove</em> cards, or just look at them?</td><td>Removes. A dealt card leaves the deck.</td></tr>
+      <tr><td>Do we model players and hands?</td><td>No. The deck hands out cards; who receives them is somebody else&rsquo;s problem.</td></tr>
+      <tr><td>Does it need to serve a specific game&rsquo;s rules?</td><td>No game. No scoring, no trump suits.</td></tr>
+      <tr><td>Is a discard pile reshuffled back in?</td><td>No. Out of scope.</td></tr>
+      <tr><td>Multiple threads dealing at once?</td><td>No. Single-threaded.</td></tr>
+      <tr><td>How is shuffling specified?</td><td>Must be swappable &mdash; a fair shuffle now, something else later.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p><strong>In scope:</strong> build a 52-card deck, shuffle it, deal one or many cards, report
+  how many are left, print a card readably, compare two cards for equality.</p>
+
+  <p><strong>Out of scope:</strong> players, hands, games, scoring, jokers, multiple decks, discard
+  piles, persistence, concurrency.</p>
+
+  <div class="callout">
+    <span class="label">Why this step matters</span>
+    <p>Notice that the last question &mdash; how shuffling is specified &mdash; is the only one whose
+    answer changes the <em>structure</em> of the design. &ldquo;Must be swappable&rdquo; is what
+    forces an interface into existence in step 5. Requirements are where structure comes from; this
+    is why you cannot skip to coding.</p>
+  </div>
+
+  <h2 id="step2-extract-the-nouns"><span class="num">03</span> Step 2 &mdash; Extract the nouns</h2>
+
+  <p>Everything the problem and my answers mention, harvested without judgement:</p>
+
+  <p><code>deck</code> &middot; <code>card</code> &middot; <code>suit</code> &middot;
+  <code>rank</code> &middot; <code>colour</code> &middot; <code>value</code> &middot;
+  <code>joker</code> &middot; <code>player</code> &middot; <code>hand</code> &middot;
+  <code>game</code> &middot; <code>shuffle</code> &middot; <code>deal</code> &middot;
+  <code>top of the deck</code> &middot; <code>discard pile</code></p>
+
+  <p>Fourteen nouns. The design has five types. That ratio is normal and it is the point of the
+  next step.</p>
+
+  <h2 id="step3-filter-the-nouns"><span class="num">04</span> Step 3 &mdash; Filter the nouns</h2>
+
+  <p>Every noun gets exactly one verdict. This table is the most valuable thing on this page.</p>
+
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>Noun</th><th>Verdict</th><th>Why</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>card</td><td><strong>class</strong></td><td>Has attributes, is compared, is printed. A thing in its own right.</td></tr>
+      <tr><td>deck</td><td><strong>class</strong></td><td>Owns a collection and has behaviour over it.</td></tr>
+      <tr><td>suit</td><td><strong>enum</strong></td><td>A closed set of exactly four, and each one carries data (symbol, colour).</td></tr>
+      <tr><td>rank</td><td><strong>enum</strong></td><td>A closed set of exactly thirteen, each carrying a label and a value.</td></tr>
+      <tr><td>colour</td><td><strong>enum, nested in Suit</strong></td><td>Not independent &mdash; it is a property of a suit. Hearts are red; there is no free-floating colour.</td></tr>
+      <tr><td>value</td><td><strong>attribute of Rank</strong></td><td>A number on a rank, not a thing that exists by itself.</td></tr>
+      <tr><td>shuffle</td><td><strong>method &mdash; and an interface</strong></td><td>A verb, so normally just a method. It earns a type <em>only</em> because step 1 said the algorithm must be swappable.</td></tr>
+      <tr><td>deal</td><td><strong>method on Deck</strong></td><td>A verb with exactly one implementation. No type needed.</td></tr>
+      <tr><td>top of the deck</td><td><strong>noise &mdash; it is a convention</strong></td><td>Becomes a one-line decision: the top is the end of the list, so dealing is O(1).</td></tr>
+      <tr><td>player, hand, game</td><td><strong>out of scope</strong></td><td>Declared out in step 1. Say so out loud; do not silently drop them.</td></tr>
+      <tr><td>joker, discard pile</td><td><strong>out of scope</strong></td><td>Same.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout callout-key">
+    <span class="label">The rule you will use forever</span>
+    <p>A <strong>noun</strong> becomes a class when it has state <em>and</em> behaviour of its own.
+    It becomes an <strong>enum</strong> when the set of possible values is closed and known.
+    It becomes an <strong>attribute</strong> when it only makes sense as part of something else.
+    A <strong>verb</strong> becomes a method &mdash; and becomes a <em>type</em> only when it has
+    interchangeable implementations.</p>
+  </div>
+
+  <h2 id="step4-one-responsibility-each"><span class="num">05</span> Step 4 &mdash; One responsibility each</h2>
+
+  <p>Write each class&rsquo;s purpose as a sentence it could say about itself. The test is
+  mechanical: two uses of &ldquo;and&rdquo; means two classes.</p>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Type</th><th>&ldquo;I am&hellip;&rdquo; / &ldquo;I&hellip;&rdquo;</th></tr></thead>
+    <tbody>
+      <tr><td><code>Card</code></td><td>I am one playing card, identified by my suit and my rank.</td></tr>
+      <tr><td><code>Deck</code></td><td>I hold an ordered pile of cards and hand them out from the top.</td></tr>
+      <tr><td><code>Suit</code></td><td>I am one of the four suits, and I know my symbol and my colour.</td></tr>
+      <tr><td><code>Rank</code></td><td>I am one of the thirteen ranks, and I know my label and my comparison value.</td></tr>
+      <tr><td><code>Shuffler</code></td><td>I reorder a list of cards.</td></tr>
+      <tr><td><code>RandomShuffler</code></td><td>I reorder a list of cards uniformly at random.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout callout-warn">
+    <span class="label">An honest wobble</span>
+    <p><code>Deck</code>&rsquo;s sentence contains an &ldquo;and&rdquo;, and it also knows how to
+    <em>build</em> a standard 52-card deck. That is arguably a third job. I am leaving it there
+    today because splitting it now would cost more than it buys &mdash; but it is a real smell, and
+    module 06 comes back to it with a factory. Noticing the wobble and choosing to live with it is
+    design. Not noticing it is not.</p>
+  </div>
+
+  <h2 id="step5-find-the-relationships"><span class="num">06</span> Step 5 &mdash; Find the relationships</h2>
+
+  <p>Four relationships, and each is a different <em>strength</em> of connection. This distinction
+  is the most-asked UML question in interviews, so it gets its own module later.</p>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Between</th><th>Kind</th><th>Why that one</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>Deck</code> &rarr; <code>Card</code></td>
+        <td><strong>Composition</strong> (filled diamond)</td>
+        <td>The deck creates its own cards, nobody else holds that list, and the cards have no life
+        outside it. Strongest form of &ldquo;has-a&rdquo;: owner dies, contents die.</td>
+      </tr>
+      <tr>
+        <td><code>Card</code> &rarr; <code>Suit</code>, <code>Rank</code></td>
+        <td><strong>Association</strong> (plain arrow)</td>
+        <td>A card <em>refers to</em> enum constants it does not own. Enum constants are shared
+        singletons &mdash; every ace of spades points at the same <code>SPADES</code>.</td>
+      </tr>
+      <tr>
+        <td><code>Deck</code> &rarr; <code>Shuffler</code></td>
+        <td><strong>Dependency</strong> (dashed arrow)</td>
+        <td>The deck never stores a shuffler. It is handed one, uses it, forgets it. Weakest link
+        there is &mdash; and that weakness is deliberate.</td>
+      </tr>
+      <tr>
+        <td><code>RandomShuffler</code> &rarr; <code>Shuffler</code></td>
+        <td><strong>Realisation</strong> (dashed, hollow triangle)</td>
+        <td>It implements the interface.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2 id="step6-draw-it"><span class="num">07</span> Step 6 &mdash; Draw it</h2>
+
+  <figure class="diagram">
+    <div class="code-head"><span class="fname">Deck of Cards &mdash; class diagram</span><span class="spacer"></span></div>
+    <div class="mermaid" data-state="pending">
+classDiagram
+    class Deck {
+        -List~Card~ cards
+        +standard52() Deck$
+        +shuffle(Shuffler) void
+        +deal() Card
+        +deal(int count) List~Card~
+        +remaining() int
+        +isEmpty() boolean
+        +cards() List~Card~
+    }
+
+    class Card {
+        -Suit suit
+        -Rank rank
+        +suit() Suit
+        +rank() Rank
+        +equals(Object) boolean
+        +hashCode() int
+        +toString() String
+    }
+
+    class Suit {
+        &lt;&lt;enumeration&gt;&gt;
+        +symbol() String
+        +colour() Colour
+    }
+
+    class Rank {
+        &lt;&lt;enumeration&gt;&gt;
+        +label() String
+        +value() int
+    }
+
+    class Shuffler {
+        &lt;&lt;interface&gt;&gt;
+        +shuffle(List~Card~) void
+    }
+
+    class RandomShuffler {
+        -Random random
+        +shuffle(List~Card~) void
+    }
+
+    Deck "1" *-- "52" Card : owns
+    Card --&gt; Suit
+    Card --&gt; Rank
+    Deck ..&gt; Shuffler : uses
+    Shuffler &lt;|.. RandomShuffler
+    </div>
+    <figcaption>Filled diamond = composition (Deck owns its Cards). Dashed open arrow = dependency
+    (Deck is handed a Shuffler, never keeps one). Dashed hollow triangle = realisation.</figcaption>
+  </figure>
+
+  <p>Read the diagram and notice what it tells you at a glance: <code>Deck</code> is the only class
+  with a lot of methods, the enums are leaves, and the only dashed line in the design is the one
+  place a decision can change later. A good class diagram makes the flexible part visible.</p>
+
+  <h2 id="step7-code-it"><span class="num">08</span> Step 7 &mdash; Code it</h2>
+
+  <p>Four excerpts, each illustrating one decision from the steps above. Full sources are in
+  <code>00-overview/src/deck/</code>.</p>
+
+  <h3>An enum that carries data and behaviour</h3>
+
+  <div class="code-block">
+    <div class="code-head">
+      <span class="fname">Suit.java</span>
+      <span class="spacer"></span>
+      <a href="src/deck/Suit.java">open file</a>
+    </div>
+<pre><code class="language-java">public enum Suit {
+
+    CLUBS("♣", Colour.BLACK),
+    DIAMONDS("♦", Colour.RED),
+    HEARTS("♥", Colour.RED),
+    SPADES("♠", Colour.BLACK);
+
+    public enum Colour { RED, BLACK }
+
+    private final String symbol;
+    private final Colour colour;
+
+    Suit(String symbol, Colour colour) {
+        this.symbol = symbol;
+        this.colour = colour;
+    }
+
+    public String symbol() { return symbol; }
+
+    public Colour colour() { return colour; }
+}</code></pre>
+  </div>
+
+  <p>This is the payoff of calling suit an <em>enum</em> rather than a <code>String</code>. An
+  invalid suit is now unrepresentable, and the symbol lives next to the thing it belongs to instead
+  of in some <code>SuitUtils.getSymbol(String)</code> helper.</p>
+
+  <h3>An immutable value object, written the long way</h3>
+
+  <div class="code-block">
+    <div class="code-head">
+      <span class="fname">Card.java</span>
+      <span class="spacer"></span>
+      <a href="src/deck/Card.java">open file</a>
+    </div>
+<pre><code class="language-java">public final class Card {
+
+    private final Suit suit;
+    private final Rank rank;
+
+    public Card(Suit suit, Rank rank) {
+        this.suit = Objects.requireNonNull(suit, "suit");
+        this.rank = Objects.requireNonNull(rank, "rank");
+    }
+
+    public Suit suit() { return suit; }
+
+    public Rank rank() { return rank; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Card)) return false;
+        Card other = (Card) o;
+        return suit == other.suit &amp;&amp; rank == other.rank;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(suit, rank);
+    }
+
+    @Override
+    public String toString() {
+        return rank.label() + suit.symbol();
+    }
+}</code></pre>
+  </div>
+
+  <div class="callout callout-key">
+    <span class="label">Deliberately longhand</span>
+    <p>Java 17 collapses that entire file into <code>public record Card(Suit suit, Rank rank) {}</code>
+    &mdash; constructor, accessors, <code>equals</code>, <code>hashCode</code> and
+    <code>toString</code>, all generated. We are going to keep writing it the long way for a while,
+    because <code>record</code> is only useful to you once you can say precisely what it generated.
+    Shorthand after longhand, not instead of it.</p>
+  </div>
+
+  <h3>The seam</h3>
+
+  <div class="code-block">
+    <div class="code-head">
+      <span class="fname">Shuffler.java</span>
+      <span class="spacer"></span>
+      <a href="src/deck/Shuffler.java">open file</a>
+    </div>
+<pre><code class="language-java">public interface Shuffler {
+
+    void shuffle(List&lt;Card&gt; cards);
+}</code></pre>
+  </div>
+
+  <p>Three lines, and they are the only reason this design can absorb a new requirement without
+  being edited. One abstract method also means any lambda of that shape is a
+  <code>Shuffler</code> &mdash; which the demo exploits.</p>
+
+  <h3>Ownership and a read-only view</h3>
+
+  <div class="code-block">
+    <div class="code-head">
+      <span class="fname">Deck.java &mdash; excerpt</span>
+      <span class="spacer"></span>
+      <a href="src/deck/Deck.java">open file</a>
+    </div>
+<pre><code class="language-java">public class Deck {
+
+    private final List&lt;Card&gt; cards;
+
+    private Deck(List&lt;Card&gt; cards) {
+        this.cards = cards;
+    }
+
+    public static Deck standard52() {
+        List&lt;Card&gt; cards = new ArrayList&lt;&gt;(52);
+        for (Suit suit : Suit.values()) {
+            for (Rank rank : Rank.values()) {
+                cards.add(new Card(suit, rank));
+            }
+        }
+        return new Deck(cards);
+    }
+
+    public void shuffle(Shuffler shuffler) {
+        shuffler.shuffle(cards);
+    }
+
+    public Card deal() {
+        if (isEmpty()) {
+            throw new IllegalStateException("deck is empty");
+        }
+        return cards.remove(cards.size() - 1);
+    }
+
+    public List&lt;Card&gt; cards() {
+        return Collections.unmodifiableList(cards);
+    }
+}</code></pre>
+  </div>
+
+  <p>Three things to notice, each a design decision rather than a coding one. The constructor is
+  <strong>private</strong>, so a deck can only be born through a named factory. The list is
+  <strong>never handed in</strong> from outside, which is what makes the composition real rather
+  than aspirational. And <code>cards()</code> returns an <strong>unmodifiable view</strong>, so
+  callers can look without being able to reach in and reorder the pile.</p>
+
+  <h2 id="step8-run-it"><span class="num">09</span> Step 8 &mdash; Run it</h2>
+
+  <p>Compiled with JDK 17 and executed. This is the actual output, not a sketch of it:</p>
+
+  <div class="code-block">
+    <div class="code-head"><span class="fname">compile &amp; run</span><span class="spacer"></span></div>
+<pre><code>javac -encoding UTF-8 -d out $(find src -name '*.java')
+java -cp out deck.DeckDemo</code></pre>
+  </div>
+
+  <div class="term">
+    <div class="code-head"><span class="fname">output</span><span class="spacer"></span></div>
+<pre>fresh deck      : 52 cards
+first five      : [2&#9827;, 3&#9827;, 4&#9827;, 5&#9827;, 6&#9827;]
+after shuffle   : [4&#9830;, 2&#9824;, 10&#9829;, J&#9829;, 8&#9829;] ...
+
+alice           : [2&#9829;, 8&#9824;, J&#9824;, 7&#9829;, 7&#9830;]
+bob             : [9&#9830;, 7&#9827;, A&#9829;, 6&#9824;, 7&#9824;]
+remaining       : 42 cards
+
+value equality  : one == two ? false   one.equals(two) ? true
+
+the seam -- swap the shuffling policy, Deck is untouched:
+reversed, top 3 : [10&#9829;, 2&#9824;, 4&#9830;]
+
+guard rail      : asked for 99 cards, only 42 left</pre>
+  </div>
+
+  <p>Two lines in that output are worth more than the rest. <code>one == two ? false</code> with
+  <code>one.equals(two) ? true</code> is the whole point of a value object: two distinct objects,
+  one card. And the reversal happened because of this single line in the demo &mdash; a complete
+  change of shuffling policy, with <code>Deck</code> never recompiled:</p>
+
+  <div class="code-block">
+    <div class="code-head"><span class="fname">DeckDemo.java &mdash; the seam in use</span><span class="spacer"></span></div>
+<pre><code class="language-java">deck.shuffle(cards -&gt; Collections.reverse(cards));</code></pre>
+  </div>
+
+  <h2 id="step9-critique-it"><span class="num">10</span> Step 9 &mdash; Critique it</h2>
+
+  <p>Six weaknesses in my own design, with the module that fixes each. Doing this unprompted in an
+  interview is the strongest signal you can send &mdash; it says you know the difference between
+  &ldquo;it works&rdquo; and &ldquo;it is good&rdquo;.</p>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Weakness</th><th>Why it is a problem</th><th>Fixed in</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>Rank.value()</code> hardcodes aces high</td>
+        <td>That is a <em>game</em> rule living inside a <em>deck</em> type. Blackjack wants ace = 1 or 11.</td>
+        <td>Module 05, Single Responsibility</td>
+      </tr>
+      <tr>
+        <td><code>Deck.standard52()</code> means Deck builds itself</td>
+        <td>Adding jokers or a pinochle deck means editing <code>Deck</code>, a class that should
+        not care what is in it.</td>
+        <td>Module 06, creational patterns</td>
+      </tr>
+      <tr>
+        <td><code>cards()</code> returns a <em>view</em>, not a copy</td>
+        <td>The caller cannot modify it &mdash; but it keeps changing under them as cards are dealt.
+        Subtle, and a real bug source.</td>
+        <td>Module 01, immutability</td>
+      </tr>
+      <tr>
+        <td><code>Shuffler</code> is the Strategy pattern, unnamed</td>
+        <td>Not a flaw &mdash; a sign. We arrived at a pattern by following requirements, which is
+        the correct direction. Patterns are destinations, not starting points.</td>
+        <td>Module 06, behavioural patterns</td>
+      </tr>
+      <tr>
+        <td>No discard pile, no reset</td>
+        <td>A dealt card is gone forever. Fine for the stated scope; would not survive a real card game.</td>
+        <td>Module 07, full problems</td>
+      </tr>
+      <tr>
+        <td>Not thread-safe</td>
+        <td>Two threads calling <code>deal()</code> can receive the same card. Scoped out in step 1,
+        on purpose and out loud.</td>
+        <td>Module 07, full problems</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2 id="the-checklist-condensed"><span class="num">11</span> The checklist, condensed</h2>
+
+  <p>This is what you will actually hold in your head. Everything above is the explanation; this is
+  the tool.</p>
+
+  <div class="gate">
+    <h3>Nine steps, every problem</h3>
+    <ul>
+      <li><input type="checkbox" id="c1"><label for="c1"><strong>Clarify</strong> &mdash; ask until bounded; state what is out of scope</label></li>
+      <li><input type="checkbox" id="c2"><label for="c2"><strong>Nouns</strong> &mdash; harvest everything, judge nothing</label></li>
+      <li><input type="checkbox" id="c3"><label for="c3"><strong>Filter</strong> &mdash; class / enum / attribute / noise</label></li>
+      <li><input type="checkbox" id="c4"><label for="c4"><strong>Responsibility</strong> &mdash; one first-person sentence each</label></li>
+      <li><input type="checkbox" id="c5"><label for="c5"><strong>Relationships</strong> &mdash; owns, refers to, or merely uses</label></li>
+      <li><input type="checkbox" id="c6"><label for="c6"><strong>Draw</strong> &mdash; make a bad design look bad</label></li>
+      <li><input type="checkbox" id="c7"><label for="c7"><strong>Code</strong> &mdash; signatures expose lies</label></li>
+      <li><input type="checkbox" id="c8"><label for="c8"><strong>Run</strong> &mdash; observe, do not assume</label></li>
+      <li><input type="checkbox" id="c9"><label for="c9"><strong>Critique</strong> &mdash; name your own weaknesses first</label></li>
+    </ul>
+    <p class="gate-state"></p>
+  </div>
+
+  <p class="muted">Those checkboxes are a scratchpad, not a grade &mdash; tick them as you follow the
+  pipeline on your own problems. Your real progress lives in <code>PROGRESS.md</code>.</p>
+
+  <h2 id="drill-archive"><span class="num">12</span> Drill archive</h2>
+
+  <div class="callout">
+    <span class="label">Empty, on purpose</span>
+    <p>Session 1 is a map, not a lesson &mdash; there is nothing to drill yet, because you have not
+    been taught a brick, only shown the wall. From session 2 every topic page carries its drills
+    here, with answers hidden behind a click so you can re-drill yourself cold weeks later.</p>
+  </div>
+
+  <h2 id="what-happens-next"><span class="num">13</span> What happens next</h2>
+
+  <p>We restart at the bottom. Session 2 opens module 01 with the first Java primer the pipeline
+  needs &mdash; <strong>interface versus abstract class</strong> &mdash; and from there it is
+  teach, drill, drill, drill, with a mastery gate before anything moves.</p>
+
+  <p>You will notice the order is deliberate: you met <code>Shuffler</code> today as a three-line
+  interface that solved a real requirement. When module 01 teaches interfaces formally, you will
+  already know what one is <em>for</em>.</p>
+
+  <div class="pager">
+    <span class="muted">&#8592; start of the course</span>
+    <a href="../index.html">Curriculum map</a>
+  </div>
+
+  <div class="footer">
+    Module 00 &middot; Overview &mdash; taught 2026-10-05. Sources:
+    <code>00-overview/src/deck/</code>. Rebuild with
+    <code>javac -encoding UTF-8 -d out $(find src -name '*.java')</code>.
+  </div>
+
+</main>
+<aside class="toc" data-toc></aside>
+</div>
+
+<script src="../assets/mermaid.min.js"></script>
+<script src="../assets/notes.js"></script>
+</body>
+</html>

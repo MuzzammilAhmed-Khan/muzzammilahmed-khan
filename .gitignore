@@ -1,0 +1,11 @@
+# Java build output - disposable, rebuilt with javac
+out/
+*.class
+
+# Editors / OS
+.vscode/
+.idea/
+*.iml
+Thumbs.db
+desktop.ini
+.DS_Store

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Same Pipeline, In Music</title>
+<link rel="stylesheet" href="../assets/notes.css">
+</head>
+<body>
+
+<nav class="topbar">
+  <a class="home" href="../index.html">&#8592; LLD notes</a>
+  <span class="crumb">00 &middot; Overview &rsaquo; The same pipeline, in music</span>
+  <span class="spacer"></span>
+  <button class="iconbtn" data-theme-toggle type="button">&#9675; Dark</button>
+</nav>
+
+<div class="wrap topic-layout">
+<main class="content">
+
+  <header class="page-head">
+    <div class="eyebrow">Module 00 &middot; Overview</div>
+    <h1>The same pipeline, in music</h1>
+    <div class="meta-row">
+      <span class="chip chip-learning">Taught &middot; not drilled</span>
+      <span>Session 1 &middot; 2026-10-06</span>
+      <span>Worked example: the Up Next queue</span>
+    </div>
+  </header>
+
+  <div class="lede">
+    <p>The same nine steps as the deck of cards, run again on something you have actually used:
+    the <strong>Up Next</strong> queue in a music app. Add songs, hit shuffle, play the next one.</p>
+    <p>Read this one if the cards meant nothing to you. Read both if you want to watch the point
+    land twice: <em>the steps do not change when the subject does.</em></p>
+  </div>
+
+  <div class="callout callout-key">
+    <span class="label">Why two examples, not one</span>
+    <p>One worked example teaches you a deck of cards. Two teach you the <em>method</em>, because
+    the only thing they have in common is the method. And these two do not agree on everything
+    &mdash; one relationship comes out differently, for a reason worth more than either example
+    on its own. That difference is <a href="#step5-find-the-relationships">step 5</a>.</p>
+  </div>
+
+  <p>The nine steps, in short &mdash; the full version lives on
+  <a href="lld-process-map.html#the-nine-steps">the map</a>:</p>
+
+  <p class="muted"><strong>1</strong> clarify &middot; <strong>2</strong> nouns &middot;
+  <strong>3</strong> filter &middot; <strong>4</strong> responsibility &middot;
+  <strong>5</strong> relationships &middot; <strong>6</strong> draw &middot;
+  <strong>7</strong> code &middot; <strong>8</strong> run &middot; <strong>9</strong> critique</p>
+
+  <h2 id="step1-clarify-the-requirements"><span class="num">01</span> Step 1 &mdash; Clarify the requirements</h2>
+
+  <p>The prompt: <strong>&ldquo;Design the Up Next queue in a music app.&rdquo;</strong></p>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Question</th><th>Answer I will design to</th></tr></thead>
+    <tbody>
+      <tr><td>Is this a saved playlist, or the Up Next queue?</td><td>The queue. Playing a song takes it out of the line.</td></tr>
+      <tr><td>Can you add songs while it is playing?</td><td>Yes, onto the end.</td></tr>
+      <tr><td>Do we actually play audio?</td><td>No. We hand out the next song; something else plays it.</td></tr>
+      <tr><td>Repeat mode? Previous track?</td><td>No. Out of scope.</td></tr>
+      <tr><td>Shuffle?</td><td>Yes &mdash; and the algorithm must be swappable.</td></tr>
+      <tr><td>What does a song need to know about itself?</td><td>Title, artist, genre, length. No album, no artwork.</td></tr>
+      <tr><td>Multiple devices or users sharing a queue?</td><td>No. One queue, one thread.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p><strong>In scope:</strong> hold an ordered line of songs, add to it, shuffle it, play the next
+  one, report how many are left and how long that is, print a song readably, compare two songs.</p>
+
+  <p><strong>Out of scope:</strong> audio playback, albums, artwork, repeat, previous, saved
+  playlists, users, devices, persistence, concurrency.</p>
+
+  <div class="callout">
+    <span class="label">Same lesson as last time</span>
+    <p>One answer changes the <em>structure</em> rather than the details: &ldquo;shuffle must be
+    swappable&rdquo;. That single sentence is what forces an interface to exist. Everything else
+    just fills in fields.</p>
+  </div>
+
+  <h2 id="step2-extract-the-nouns"><span class="num">02</span> Step 2 &mdash; Extract the nouns</h2>
+
+  <p><code>song</code> &middot; <code>playlist</code> &middot; <code>queue</code> &middot;
+  <code>title</code> &middot; <code>artist</code> &middot; <code>album</code> &middot;
+  <code>genre</code> &middot; <code>duration</code> &middot; <code>library</code> &middot;
+  <code>shuffle</code> &middot; <code>play</code> &middot; <code>next</code> &middot;
+  <code>repeat</code> &middot; <code>user</code> &middot; <code>device</code> &middot;
+  <code>volume</code></p>
+
+  <p>Sixteen nouns. Four types come out the other end.</p>
+
+  <h2 id="step3-filter-the-nouns"><span class="num">03</span> Step 3 &mdash; Filter the nouns</h2>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Noun</th><th>Verdict</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>song</td><td><strong>class</strong></td><td>Attributes of its own, compared, printed.</td></tr>
+      <tr><td>queue / playlist</td><td><strong>class &mdash; named <code>PlayQueue</code></strong></td><td>Owns an ordered collection and has behaviour over it. See the naming note below.</td></tr>
+      <tr><td>genre</td><td><strong>enum</strong></td><td>Closed, known set, and each value carries a label and an energy level.</td></tr>
+      <tr><td>title, duration</td><td><strong>attributes of Song</strong></td><td>Meaningless on their own.</td></tr>
+      <tr><td>artist</td><td><strong>attribute &mdash; a <code>String</code>, here</strong></td><td>Read the callout under this table. This row is the interesting one.</td></tr>
+      <tr><td>shuffle</td><td><strong>method &mdash; and an interface</strong></td><td>A verb. It earns a type <em>only</em> because step 1 said swappable.</td></tr>
+      <tr><td>play, next</td><td><strong>one method, <code>playNext()</code></strong></td><td>Verbs with a single implementation.</td></tr>
+      <tr><td>library</td><td><strong>out of scope &mdash; but it exists</strong></td><td>We do not model it, yet songs plainly come from somewhere. That shows up in step 5.</td></tr>
+      <tr><td>album, repeat, user, device, volume</td><td><strong>out of scope</strong></td><td>Declared out in step 1. Say so; do not silently drop them.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout callout-key">
+    <span class="label">The row worth stopping on: artist</span>
+    <p>In <em>this</em> design, artist is a <code>String</code> on <code>Song</code>. In Spotify&rsquo;s
+    real design, <code>Artist</code> is certainly a class &mdash; it has followers, albums, a monthly
+    listener count, a page you can open.</p>
+    <p>Both are correct. The verdict changed because the <em>scope</em> changed, not because the
+    word changed. A noun is not a class because of what it is; it is a class because of what your
+    system needs it to do. This is the single most common thing beginners get backwards.</p>
+  </div>
+
+  <div class="callout callout-warn">
+    <span class="label">Naming: why not <code>Playlist</code>?</span>
+    <p>Because playing a song <em>removes</em> it here, and a saved playlist does not shrink when
+    you listen to it. If the name says playlist and the behaviour says queue, every future reader
+    &mdash; including you in three weeks &mdash; will be confused by it. The name has to match the
+    behaviour. Module 03 has a whole topic on this.</p>
+  </div>
+
+  <h2 id="step4-one-responsibility-each"><span class="num">04</span> Step 4 &mdash; One responsibility each</h2>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Type</th><th>&ldquo;I am&hellip;&rdquo; / &ldquo;I&hellip;&rdquo;</th></tr></thead>
+    <tbody>
+      <tr><td><code>Song</code></td><td>I am one song, identified by my title and my artist.</td></tr>
+      <tr><td><code>PlayQueue</code></td><td>I hold an ordered line of songs and hand out the next one to play.</td></tr>
+      <tr><td><code>Genre</code></td><td>I am one of a fixed set of genres, and I know my label and my energy.</td></tr>
+      <tr><td><code>Shuffler</code></td><td>I reorder a list of songs.</td></tr>
+      <tr><td><code>RandomShuffler</code></td><td>I reorder a list of songs uniformly at random.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>Compare these to the deck&rsquo;s sentences and notice they are the <em>same sentences</em> with
+  the nouns swapped. That is the first sign you are learning a method rather than a domain.</p>
+
+  <h2 id="step5-find-the-relationships"><span class="num">05</span> Step 5 &mdash; Find the relationships</h2>
+
+  <p>Here is where the two examples part company, and it is the most valuable paragraph on this
+  page.</p>
+
+  <div class="callout callout-key">
+    <span class="label">Composition vs aggregation</span>
+    <p>A <code>Deck</code> <strong>creates</strong> its 52 cards. They exist nowhere else and they
+    die with the deck. That is <strong>composition</strong> &mdash; a filled diamond.</p>
+    <p>A <code>PlayQueue</code> is <strong>handed</strong> songs that already exist in your library
+    and go on existing after the queue is empty. That is <strong>aggregation</strong> &mdash; a
+    hollow diamond.</p>
+    <p>Same picture, same arrow, one hollow shape instead of a filled one, and a completely
+    different claim about who is responsible for whose lifetime.</p>
+  </div>
+
+  <figure class="diagram">
+    <div class="code-head"><span class="fname">the one difference</span><span class="spacer"></span></div>
+    <div class="mermaid" data-state="pending">
+classDiagram
+    direction LR
+    class Deck
+    class Card
+    class PlayQueue
+    class Song
+
+    Deck "1" *-- "52" Card : creates and owns
+    PlayQueue "1" o-- "*" Song : holds, does not own
+    </div>
+    <figcaption>Filled diamond: the owner&rsquo;s death kills the parts. Hollow diamond: the parts
+    were alive before and stay alive after. The <code>*</code> is UML for &ldquo;zero or more&rdquo;
+    &mdash; a deck is always exactly 52, a queue is any length.</figcaption>
+  </figure>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Between</th><th>Kind</th><th>Why that one</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>PlayQueue</code> &rarr; <code>Song</code></td>
+        <td><strong>Aggregation</strong> (hollow diamond)</td>
+        <td>Songs come from a library and survive the queue being drained. The queue borrows them.</td>
+      </tr>
+      <tr>
+        <td><code>Song</code> &rarr; <code>Genre</code></td>
+        <td><strong>Association</strong> (plain arrow)</td>
+        <td>A song refers to an enum constant it does not own. Every pop song points at the same
+        <code>POP</code>.</td>
+      </tr>
+      <tr>
+        <td><code>PlayQueue</code> &rarr; <code>Shuffler</code></td>
+        <td><strong>Dependency</strong> (dashed arrow)</td>
+        <td>Handed one, uses it, forgets it. Never stored.</td>
+      </tr>
+      <tr>
+        <td><code>RandomShuffler</code> &rarr; <code>Shuffler</code></td>
+        <td><strong>Realisation</strong> (dashed, hollow triangle)</td>
+        <td>It implements the interface.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout callout-warn">
+    <span class="label">The subtlety that trips people, and it is in the code</span>
+    <p>The queue does not own the <em>songs</em> &mdash; but it absolutely does own its own
+    <em>list</em> of them. Your library order must not change because someone hit shuffle on the
+    queue.</p>
+    <p>So <code>PlayQueue.of(...)</code> takes a copy of the list. <strong>Shared contents, private
+    ordering.</strong> Aggregating the elements and owning the container are two different
+    decisions, and most people only make one of them on purpose.</p>
+  </div>
+
+  <h2 id="step6-draw-it"><span class="num">06</span> Step 6 &mdash; Draw it</h2>
+
+  <figure class="diagram">
+    <div class="code-head"><span class="fname">Up Next queue &mdash; class diagram</span><span class="spacer"></span></div>
+    <div class="mermaid" data-state="pending">
+classDiagram
+    class PlayQueue {
+        -List~Song~ songs
+        +of(List~Song~) PlayQueue$
+        +empty() PlayQueue$
+        +add(Song) void
+        +shuffle(Shuffler) void
+        +playNext() Song
+        +remaining() int
+        +isEmpty() boolean
+        +totalSeconds() int
+        +songs() List~Song~
+    }
+
+    class Song {
+        -String title
+        -String artist
+        -Genre genre
+        -int seconds
+        +title() String
+        +artist() String
+        +duration() String
+        +equals(Object) boolean
+        +hashCode() int
+        +toString() String
+    }
+
+    class Genre {
+        &lt;&lt;enumeration&gt;&gt;
+        +label() String
+        +energy() Energy
+    }
+
+    class Shuffler {
+        &lt;&lt;interface&gt;&gt;
+        +shuffle(List~Song~) void
+    }
+
+    class RandomShuffler {
+        -Random random
+        +shuffle(List~Song~) void
+    }
+
+    PlayQueue "1" o-- "*" Song : holds
+    Song --&gt; Genre
+    PlayQueue ..&gt; Shuffler : uses
+    Shuffler &lt;|.. RandomShuffler
+    </div>
+    <figcaption>Hollow diamond = aggregation. Dashed open arrow = dependency. Underlined members
+    are static. Put this beside the deck diagram and only one shape is different.</figcaption>
+  </figure>
+
+  <h2 id="step7-code-it"><span class="num">07</span> Step 7 &mdash; Code it</h2>
+
+  <p>Full sources in <code>00-overview/src/playlist/</code>.</p>
+
+  <h3>The enum, carrying data</h3>
+
+  <div class="code-block">
+    <div class="code-head">
+      <span class="fname">Genre.java</span>
+      <span class="spacer"></span>
+      <a href="src/playlist/Genre.java">open file</a>
+    </div>
+<pre><code class="language-java">public enum Genre {
+
+    POP("Pop", Energy.HIGH),
+    ROCK("Rock", Energy.HIGH),
+    HIP_HOP("Hip-Hop", Energy.HIGH),
+    JAZZ("Jazz", Energy.MEDIUM),
+    CLASSICAL("Classical", Energy.LOW),
+    LOFI("Lo-fi", Energy.LOW);
+
+    public enum Energy { LOW, MEDIUM, HIGH }
+
+    private final String label;
+    private final Energy energy;
+
+    Genre(String label, Energy energy) {
+        this.label = label;
+        this.energy = energy;
+    }
+
+    public String label() { return label; }
+
+    public Energy energy() { return energy; }
+}</code></pre>
+  </div>
+
+  <h3>The value object &mdash; and a decision about identity</h3>
+
+  <div class="code-block">
+    <div class="code-head">
+      <span class="fname">Song.java &mdash; excerpt</span>
+      <span class="spacer"></span>
+      <a href="src/playlist/Song.java">open file</a>
+    </div>
+<pre><code class="language-java">public final class Song {
+
+    private final String title;
+    private final String artist;
+    private final Genre genre;
+    private final int seconds;
+
+    public Song(String title, String artist, Genre genre, int seconds) {
+        this.title = Objects.requireNonNull(title, "title");
+        this.artist = Objects.requireNonNull(artist, "artist");
+        this.genre = Objects.requireNonNull(genre, "genre");
+        if (seconds &lt;= 0) {
+            throw new IllegalArgumentException("seconds must be positive: " + seconds);
+        }
+        this.seconds = seconds;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Song)) return false;
+        Song other = (Song) o;
+        return title.equals(other.title) &amp;&amp; artist.equals(other.artist);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, artist);
+    }
+
+    @Override
+    public String toString() {
+        return title + " - " + artist + " (" + duration() + ")";
+    }
+}</code></pre>
+  </div>
+
+  <div class="callout callout-key">
+    <span class="label">Notice what equals() does not use</span>
+    <p><code>Card</code> compared every field it had. <code>Song</code> compares <strong>title and
+    artist only</strong> &mdash; so a remaster at a different length counts as the same song.</p>
+    <p>That is a <em>decision</em>, not a default, and you have to be able to defend it. The
+    critique section argues the opposite case. The real lesson: <strong>identity is designed, not
+    discovered.</strong></p>
+  </div>
+
+  <h3>Borrowed contents, owned container</h3>
+
+  <div class="code-block">
+    <div class="code-head">
+      <span class="fname">PlayQueue.java &mdash; excerpt</span>
+      <span class="spacer"></span>
+      <a href="src/playlist/PlayQueue.java">open file</a>
+    </div>
+<pre><code class="language-java">public class PlayQueue {
+
+    private final List&lt;Song&gt; songs;
+
+    private PlayQueue(List&lt;Song&gt; songs) {
+        this.songs = songs;
+    }
+
+    /** Defensive copy: the caller keeps their list, we get our own ordering. */
+    public static PlayQueue of(List&lt;Song&gt; songs) {
+        Objects.requireNonNull(songs, "songs");
+        return new PlayQueue(new ArrayList&lt;&gt;(songs));
+    }
+
+    public void shuffle(Shuffler shuffler) {
+        shuffler.shuffle(songs);
+    }
+
+    public Song playNext() {
+        if (isEmpty()) {
+            throw new IllegalStateException("queue is empty");
+        }
+        return songs.remove(0);
+    }
+
+    public List&lt;Song&gt; songs() {
+        return Collections.unmodifiableList(songs);
+    }
+}</code></pre>
+  </div>
+
+  <p>Two details carry the whole aggregation story. <code>new ArrayList&lt;&gt;(songs)</code> copies
+  the <em>list</em> &mdash; so shuffling the queue cannot reorder your library. The copy contains the
+  <em>same</em> <code>Song</code> objects &mdash; so the songs are shared, not duplicated. That is
+  aggregation spelled out in one line.</p>
+
+  <p>And <code>playNext()</code> removes from the <strong>front</strong>, where the deck dealt from
+  the end. A queue is first-in-first-out; a deck is a stack. On an <code>ArrayList</code> that makes
+  this O(n) instead of O(1) &mdash; irrelevant at playlist sizes, and module 01 comes back to it when
+  <code>ArrayDeque</code> appears.</p>
+
+  <h2 id="step8-run-it"><span class="num">08</span> Step 8 &mdash; Run it</h2>
+
+  <div class="code-block">
+    <div class="code-head"><span class="fname">compile &amp; run</span><span class="spacer"></span></div>
+<pre><code>javac -encoding UTF-8 -d out $(find src -name '*.java')
+java -cp out playlist.PlayQueueDemo</code></pre>
+  </div>
+
+  <div class="term">
+    <div class="code-head"><span class="fname">output</span><span class="spacer"></span></div>
+<pre>library size    : 6 songs
+queued          : 6 songs, 23 minutes
+up next         : [Neon Avenue - The Glass Hours (3:18), Slow Tide - Marina Vale (4:01), Steel Garden - Ninefold (4:36)]
+after shuffle   : [Blue Hour - Oscar Mbeki Trio (5:24), Neon Avenue - The Glass Hours (3:18), Slow Tide - Marina Vale (4:01)] ...
+
+now playing     : Blue Hour - Oscar Mbeki Trio (5:24)
+now playing     : Neon Avenue - The Glass Hours (3:18)
+remaining       : 4 songs
+after add       : 5 songs
+
+value equality  : studio == remaster ? false   studio.equals(remaster) ? true
+                  (identity is title + artist only -- see the critique)
+
+the seam -- swap the shuffling policy, PlayQueue is untouched:
+reversed, next  : Harbour Lights - Ninefold (4:12)
+
+queue drained   : 0 songs left
+library still   : 6 songs  &lt;-- aggregation, not
+                  composition: the songs outlived the queue</pre>
+  </div>
+
+  <p>Those last two lines are aggregation proved at runtime rather than asserted in a diagram. The
+  queue was emptied completely; the library still holds all six songs. Had this been composition,
+  draining the queue would have destroyed them.</p>
+
+  <h2 id="step9-critique-it"><span class="num">09</span> Step 9 &mdash; Critique it</h2>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Weakness</th><th>Why it is a problem</th><th>Fixed in</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>Song.equals</code> ignores duration</td>
+        <td>A 4-minute studio cut and a 9-minute live version are &ldquo;the same song&rdquo;. Fine for
+        a queue; wrong the moment you need to not play the same recording twice.</td>
+        <td>Module 01, equals and hashCode</td>
+      </tr>
+      <tr>
+        <td><code>artist</code> is a bare <code>String</code></td>
+        <td><code>"The Beatles"</code> and <code>"Beatles"</code> become different artists. No way to
+        ask for everything by one artist reliably.</td>
+        <td>Module 03, class vs attribute</td>
+      </tr>
+      <tr>
+        <td><code>songs()</code> returns a <em>view</em>, not a copy</td>
+        <td>Callers cannot modify it, but it keeps changing under them as songs play.</td>
+        <td>Module 01, immutability</td>
+      </tr>
+      <tr>
+        <td><code>Shuffler</code> is duplicated from the deck</td>
+        <td>The same interface written twice, typed to different elements. One
+        <code>Shuffler&lt;T&gt;</code> should serve both.</td>
+        <td>Module 01, generics</td>
+      </tr>
+      <tr>
+        <td><code>Shuffler</code> is Strategy, unnamed</td>
+        <td>Not a flaw &mdash; a sign. Requirements led to a pattern, which is the correct direction
+        of travel.</td>
+        <td>Module 06, behavioural</td>
+      </tr>
+      <tr>
+        <td>No repeat, no previous, not thread-safe</td>
+        <td>Scoped out in step 1, out loud and on purpose.</td>
+        <td>Module 07, full problems</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2 id="the-two-designs-side-by-side"><span class="num">10</span> The two designs, side by side</h2>
+
+  <p>This is the payoff. Read down the last column: almost everything is the same, and the one
+  thing that differs, differs for a reason you can now state in a sentence.</p>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Design idea</th><th>Deck of Cards</th><th>Up Next queue</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>Value object</td><td><code>Card(suit, rank)</code></td><td><code>Song(title, artist, genre, seconds)</code></td><td>same</td></tr>
+      <tr><td>Enum carrying data</td><td><code>Suit(symbol, colour)</code></td><td><code>Genre(label, energy)</code></td><td>same</td></tr>
+      <tr><td>The collection holder</td><td><code>Deck</code></td><td><code>PlayQueue</code></td><td>same</td></tr>
+      <tr><td>Born through</td><td><code>Deck.standard52()</code></td><td><code>PlayQueue.of(...)</code></td><td>same</td></tr>
+      <tr><td>The swappable seam</td><td><code>Shuffler</code></td><td><code>Shuffler</code></td><td>same</td></tr>
+      <tr><td>Consume one</td><td><code>deal()</code> &mdash; from the end</td><td><code>playNext()</code> &mdash; from the front</td><td>same idea</td></tr>
+      <tr><td>Guard rail</td><td>deal on empty throws</td><td>play on empty throws</td><td>same</td></tr>
+      <tr><td>Read-only view</td><td><code>cards()</code></td><td><code>songs()</code></td><td>same</td></tr>
+      <tr>
+        <td><strong>Ownership</strong></td>
+        <td><strong>composition</strong> &mdash; creates its cards</td>
+        <td><strong>aggregation</strong> &mdash; borrows its songs</td>
+        <td><strong>different</strong></td>
+      </tr>
+      <tr><td>Identity uses</td><td>every field</td><td>title + artist only</td><td><strong>different</strong></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout callout-ok">
+    <span class="label">What to take from this</span>
+    <p>Eight rows identical, two different. The eight are the method; the two are the domain. When
+    you sit down to a problem you have never seen, you already have the eight &mdash; your real work
+    is only ever finding the two.</p>
+  </div>
+
+  <h2 id="drill-archive"><span class="num">11</span> Drill archive</h2>
+
+  <div class="callout">
+    <span class="label">Empty, on purpose</span>
+    <p>Still a map, not a lesson. From session 2 every topic page carries its drills here, answers
+    hidden behind a click so you can re-drill yourself cold weeks later.</p>
+  </div>
+
+  <h2 id="what-happens-next"><span class="num">12</span> What happens next</h2>
+
+  <p>We restart at the bottom with module 01, the first Java primer the pipeline needs:
+  <strong>interface versus abstract class</strong>. You have now met an interface twice &mdash; as
+  <code>Shuffler</code> in both examples &mdash; so you already know what one is <em>for</em> before
+  anyone defines it.</p>
+
+  <p>Aggregation versus composition, the difference this page turned on, gets its own topic and its
+  own drill ladder in <a href="../index.html#uml-and-mermaid-notation">module 02</a>. You have seen
+  it now; you are not expected to own it yet.</p>
+
+  <div class="pager">
+    <a href="lld-process-map.html">&#8592; The LLD pipeline (deck of cards)</a>
+    <a href="../index.html">Curriculum map</a>
+  </div>
+
+  <div class="footer">
+    Module 00 &middot; Overview &mdash; taught 2026-10-06. Sources:
+    <code>00-overview/src/playlist/</code>. Rebuild with
+    <code>javac -encoding UTF-8 -d out $(find src -name '*.java')</code>,
+    run <code>java -cp out playlist.PlayQueueDemo</code>.
+  </div>
+
+</main>
+<aside class="toc" data-toc></aside>
+</div>
+
+<script src="../assets/mermaid.min.js"></script>
+<script src="../assets/notes.js"></script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     TOPIC PAGE TEMPLATE
+
+     Copy this file to <module-folder>/<topic-slug>.html and fill it in.
+     Section order is fixed on purpose: once every page looks the same,
+     finding things in forty pages costs nothing.
+
+     Depth note: paths below assume the page sits ONE folder below the
+     notes root (e.g. 05-solid/open-closed.html -> ../assets/...).
+     For 06-patterns/behavioural/strategy.html use ../../assets/... .
+
+     MERMAID GOTCHA: inside a .mermaid div, write << >> escaped as
+     &lt;&lt;interface&gt;&gt; and arrows as --&gt; / &lt;|.. ,
+     or the browser parses <interface> as an unknown HTML tag and the
+     diagram silently loses the line. notes.js reads textContent, so the
+     escaped form is what mermaid actually receives. Generics use tildes:
+     List~Card~ renders as List<Card>.
+
+     Status chip: chip-todo | chip-learning | chip-drilled | chip-mastered
+     Drill result: data-result="ok" (first try) | "miss" (needed help)
+     Drill tags:   recognition | recall | produce | translate | apply |
+                   critique | explain-why
+     ============================================================ -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOPIC NAME</title>
+<link rel="stylesheet" href="../assets/notes.css">
+</head>
+<body>
+
+<nav class="topbar">
+  <a class="home" href="../index.html">&#8592; LLD notes</a>
+  <span class="crumb">NN &middot; Module name &rsaquo; Topic name</span>
+  <span class="spacer"></span>
+  <button class="iconbtn" data-theme-toggle type="button">&#9675; Dark</button>
+</nav>
+
+<div class="wrap topic-layout">
+<main class="content">
+
+  <header class="page-head">
+    <div class="eyebrow">Module NN &middot; Module name</div>
+    <h1>Topic name</h1>
+    <div class="meta-row">
+      <span class="chip chip-learning">Taught &middot; not drilled</span>
+      <span>Session N &middot; YYYY-MM-DD</span>
+      <span>Last drilled: &mdash;</span>
+    </div>
+  </header>
+
+  <!-- 2. WHY THIS EXISTS - the problem the concept solves, before the concept -->
+  <div class="lede">
+    <p>One paragraph. What goes wrong in code that does not have this idea? Name the pain first;
+    the concept only makes sense as a response to something.</p>
+  </div>
+
+  <!-- 3. CONCEPT - deliberately small. One idea per page. -->
+  <h2 id="the-idea"><span class="num">01</span> The idea</h2>
+
+  <p>Short prose. If this section runs past a screen and a half, the topic is too big and should be
+  split into two pages.</p>
+
+  <div class="callout callout-key">
+    <span class="label">The sentence to remember</span>
+    <p>The one formulation that, recalled under pressure, reconstructs the rest.</p>
+  </div>
+
+  <!-- 4. DIAGRAM -->
+  <h2 id="in-a-diagram"><span class="num">02</span> In a diagram</h2>
+
+  <figure class="diagram">
+    <div class="code-head"><span class="fname">topic &mdash; class diagram</span><span class="spacer"></span></div>
+    <div class="mermaid" data-state="pending">
+classDiagram
+    class Thing {
+        &lt;&lt;interface&gt;&gt;
+        +doIt() void
+    }
+
+    class Concrete {
+        -List~Item~ items
+        +doIt() void
+    }
+
+    Thing &lt;|.. Concrete
+    Concrete "1" *-- "0..*" Item : owns
+    </div>
+    <figcaption>Say in words what the notation is claiming, so the diagram teaches the notation too.</figcaption>
+  </figure>
+
+  <!-- 5. CODE - snippet here, runnable file in src/ -->
+  <h2 id="in-code"><span class="num">03</span> In code</h2>
+
+  <div class="code-block">
+    <div class="code-head">
+      <span class="fname">Thing.java</span>
+      <span class="spacer"></span>
+      <a href="src/pkg/Thing.java">open file</a>
+    </div>
+<pre><code class="language-java">public interface Thing {
+
+    void doIt();
+}</code></pre>
+  </div>
+
+  <p>Escape <code>&lt;</code> and <code>&gt;</code> inside code blocks as
+  <code>&amp;lt;</code> / <code>&amp;gt;</code> &mdash; generics such as
+  <code>List&lt;Card&gt;</code> will otherwise vanish.</p>
+
+  <!-- Real output, when running it is the lesson -->
+  <div class="term">
+    <div class="code-head"><span class="fname">output</span><span class="spacer"></span></div>
+<pre>paste the ACTUAL javac/java output here, never a guess at it</pre>
+  </div>
+
+  <!-- 6. DECISION CHECKLIST - the rules of thumb for using it under pressure -->
+  <h2 id="decision-checklist"><span class="num">04</span> Decision checklist</h2>
+
+  <ul>
+    <li><strong>Reach for it when</strong> &hellip;</li>
+    <li><strong>Do not reach for it when</strong> &hellip;</li>
+    <li><strong>The tell in a problem statement</strong> &mdash; the phrase that should make this
+    idea come to mind.</li>
+  </ul>
+
+  <!-- 7. SMELLS AND MISTAKES - what going wrong looks like -->
+  <h2 id="smells-and-mistakes"><span class="num">05</span> Smells and mistakes</h2>
+
+  <div class="callout callout-bad">
+    <span class="label">Smell</span>
+    <p>What the wrong version looks like in real code, and the symptom that gives it away.</p>
+  </div>
+
+  <!-- 8. DRILL ARCHIVE -->
+  <h2 id="drill-archive"><span class="num">06</span> Drill archive</h2>
+
+  <div class="drill-tally" data-drill-tally></div>
+  <button class="iconbtn" data-reveal-all data-open="0" type="button">Reveal all answers</button>
+
+  <p class="session-label">Session N &mdash; YYYY-MM-DD</p>
+
+  <div class="drill" data-result="ok">
+    <div class="drill-q">
+      <span class="tag">recognition</span>
+      <div class="qtext"><p>The question, exactly as it was asked.</p></div>
+      <span class="mark" title="correct first try">&#9989;</span>
+    </div>
+    <details>
+      <summary>Answer</summary>
+      <div class="answer">
+        <p>The answer, plus <em>why</em> &mdash; a bare answer is useless when re-drilling cold.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="drill" data-result="miss">
+    <div class="drill-q">
+      <span class="tag">explain-why</span>
+      <div class="qtext"><p>A question that needed a nudge.</p></div>
+      <span class="mark" title="needed help">&#10060;</span>
+    </div>
+    <details>
+      <summary>Answer</summary>
+      <div class="answer">
+        <p>The answer, and a note on what the misunderstanding actually was &mdash; that note is the
+        thing worth re-reading.</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- 9. MASTERY GATE -->
+  <h2 id="mastery-gate"><span class="num">07</span> Mastery gate</h2>
+
+  <div class="gate">
+    <h3>All four, or the topic does not move</h3>
+    <ul>
+      <li><input type="checkbox" id="m1"><label for="m1">Five consecutive drills correct, including one explain-why</label></li>
+      <li><input type="checkbox" id="m2"><label for="m2">Mermaid diagram produced unaided</label></li>
+      <li><input type="checkbox" id="m3"><label for="m3">Code compiles and runs in one or two tries</label></li>
+      <li><input type="checkbox" id="m4"><label for="m4">Can state when <strong>not</strong> to use it</label></li>
+    </ul>
+    <p class="gate-state"></p>
+  </div>
+
+  <div class="pager">
+    <a href="prev-topic.html">&#8592; Previous topic</a>
+    <a href="next-topic.html">Next topic &#8594;</a>
+  </div>
+
+  <div class="footer">
+    Module NN &middot; Module name &mdash; taught YYYY-MM-DD, last drilled YYYY-MM-DD.
+    Sources: <code>NN-module/src/pkg/</code>.
+  </div>
+
+</main>
+<aside class="toc" data-toc></aside>
+</div>
+
+<script src="../assets/mermaid.min.js"></script>
+<script src="../assets/notes.js"></script>
+</body>
+</html>
