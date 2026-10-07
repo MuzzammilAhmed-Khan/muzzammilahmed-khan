@@ -529,6 +529,39 @@ library still   : 6 songs  &lt;-- aggregation, not
   </table>
   </div>
 
+  <div class="callout callout-key">
+    <span class="label">Same code, opposite verdict</span>
+    <p>&ldquo;Is <code>Genre</code> a good design?&rdquo; feels like one question. It is three, and
+    they do not all get the same answer:</p>
+    <div class="table-wrap">
+    <table class="compare">
+      <thead><tr><th>Decision</th><th>Verdict</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><code>Song</code> has a genre field</td><td class="v-same">justified</td><td>Step 1 asked for it.</td></tr>
+        <tr><td>Genre is an enum, not a <code>String</code></td><td class="v-same">justified</td><td>Closed set; an invalid genre cannot be written down.</td></tr>
+        <tr class="row-diff"><td>Genre carries <code>label</code> and <code>Energy</code></td><td class="v-diff">not justified</td><td>Nothing asked for it, and nothing reads it.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>Now add a single requirement &mdash; <em>&ldquo;let me build a workout mix&rdquo;</em> &mdash;
+    and <code>Energy</code> earns its place instantly. Same code, same nesting, same three
+    constants, opposite verdict.</p>
+    <p>This is the same point as <code>artist</code> being a <code>String</code> here and an
+    <code>Artist</code> class at Spotify: the verdict changes because the
+    <strong>requirements</strong> changed, not because the code changed. You cannot judge a type by
+    looking at it. You judge it against what the system was asked to do.</p>
+  </div>
+
+  <div class="callout callout-warn">
+    <span class="label">The cheapest smell to check for</span>
+    <p><strong>State that nothing reads is a question, not a feature.</strong></p>
+    <p>In this design <code>energy()</code> is never called, <code>label()</code> is never called,
+    and nothing ever reads a song&rsquo;s genre at all &mdash; <code>Song.toString()</code> prints
+    title, artist and duration. The data is written and never looked at.</p>
+    <p>Catching this needs no design judgement at all. Grep for the getter and see whether anyone
+    calls it.</p>
+  </div>
+
   <h2 id="the-two-designs-side-by-side"><span class="num">10</span> The two designs, side by side</h2>
 
   <p>This is the payoff. Read down the <strong>verdict</strong> column: almost everything is the
