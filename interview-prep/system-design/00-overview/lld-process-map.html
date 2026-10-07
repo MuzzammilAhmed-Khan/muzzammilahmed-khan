@@ -193,21 +193,50 @@
 
   <h2 id="step4-one-responsibility-each"><span class="num">05</span> Step 4 &mdash; One responsibility each</h2>
 
-  <p>Write each class&rsquo;s purpose as a sentence it could say about itself. The test is
-  mechanical: two uses of &ldquo;and&rdquo; means two classes.</p>
+  <p>Every <strong>type</strong> in the design gets exactly one sentence &mdash; class, interface or
+  enum, it makes no difference. Write it in the first person, as if the type were saying it. The
+  test is mechanical: two uses of &ldquo;and&rdquo; means two types.</p>
+
+  <p>Nothing else gets a sentence. Attributes, out-of-scope nouns and noise all stay silent.</p>
 
   <div class="table-wrap">
   <table>
-    <thead><tr><th>Type</th><th>&ldquo;I am&hellip;&rdquo; / &ldquo;I&hellip;&rdquo;</th></tr></thead>
+    <thead><tr><th>Type</th><th>Kind</th><th>&ldquo;I am&hellip;&rdquo; / &ldquo;I&hellip;&rdquo;</th></tr></thead>
     <tbody>
-      <tr><td><code>Card</code></td><td>I am one playing card, identified by my suit and my rank.</td></tr>
-      <tr><td><code>Deck</code></td><td>I hold an ordered pile of cards and hand them out from the top.</td></tr>
-      <tr><td><code>Suit</code></td><td>I am one of the four suits, and I know my symbol and my colour.</td></tr>
-      <tr><td><code>Rank</code></td><td>I am one of the thirteen ranks, and I know my label and my comparison value.</td></tr>
-      <tr><td><code>Shuffler</code></td><td>I reorder a list of cards.</td></tr>
-      <tr><td><code>RandomShuffler</code></td><td>I reorder a list of cards uniformly at random.</td></tr>
+      <tr><td><code>Card</code></td><td>class</td><td>I am one playing card, identified by my suit and my rank.</td></tr>
+      <tr><td><code>Deck</code></td><td>class</td><td>I hold an ordered pile of cards and hand them out from the top.</td></tr>
+      <tr><td><code>Suit</code></td><td>enum</td><td>I am one of the four suits, and I know my symbol and my colour.</td></tr>
+      <tr><td><code>Suit.Colour</code></td><td>enum</td><td>I am one of the two colours a suit can be.</td></tr>
+      <tr><td><code>Rank</code></td><td>enum</td><td>I am one of the thirteen ranks, and I know my label and my comparison value.</td></tr>
+      <tr><td><code>Shuffler</code></td><td>interface</td><td>I reorder a list of cards.</td></tr>
+      <tr><td><code>RandomShuffler</code></td><td>class</td><td>I reorder a list of cards uniformly at random.</td></tr>
     </tbody>
   </table>
+  </div>
+
+  <div class="callout callout-key">
+    <span class="label">Where this list comes from &mdash; and why it is not just step 3</span>
+    <p>You start from the types step 3 produced, but expect the list to move in two directions.</p>
+    <p><strong>Types get added.</strong> <code>RandomShuffler</code> was never a noun in the problem
+    statement &mdash; go back and look. It exists because step 3 decided shuffling needed an
+    interface, and an interface with no implementation does nothing at all. Every interface you
+    create drags at least one concrete type in behind it.</p>
+    <p><strong>Types get split.</strong> Step 4 is a <em>test</em>, and a test can fail. When a
+    sentence needs two &ldquo;and&rdquo;s you split the type in two, and the design now contains a
+    type that did not exist when step 3 finished.</p>
+    <p>What never earns a sentence: <code>value</code> (an attribute of <code>Rank</code>),
+    <code>player</code> and <code>joker</code> (out of scope), <code>top of the deck</code> (noise).
+    If you catch yourself writing a sentence for one of those, step 3 gave it the wrong verdict
+    &mdash; go back and change it.</p>
+  </div>
+
+  <div class="callout">
+    <span class="label">A thin sentence is information</span>
+    <p><code>Suit.Colour</code>&rsquo;s sentence is almost embarrassingly short, and that is the
+    point: it tells you the type is a pure tag with no behaviour, which is exactly what a nested
+    enum should be. Write the sentence even when it feels too obvious to bother with. The one time
+    it comes out long and tangled for a type you assumed was simple is the time it has earned its
+    keep.</p>
   </div>
 
   <div class="callout callout-warn">

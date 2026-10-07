@@ -133,6 +133,7 @@ arrives. Each one is a ready-made drill.
 | Deck of Cards | no discard pile / reset; not thread-safe | 07 — full problems |
 | Music queue | `Song.equals` ignores duration — studio and live cuts collide | 01 — equals and hashCode |
 | Music queue | `artist` is a bare `String` — "The Beatles" ≠ "Beatles" | 03 — class vs attribute |
+| Music queue | `Genre.Energy` was invented, not requested — state nobody asked for | 03 — when not to make a class |
 | Music queue | `Shuffler` written twice, once per domain — one `Shuffler<T>` should serve both | 01 — generics |
 | Music queue | `playNext()` removes from the front of an `ArrayList`, O(n) | 01 — collections (`ArrayDeque`) |
 | Music queue | `songs()` returns an unmodifiable *view*, not a copy | 01 — immutability |

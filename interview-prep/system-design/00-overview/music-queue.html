@@ -92,7 +92,8 @@
   <code>repeat</code> &middot; <code>user</code> &middot; <code>device</code> &middot;
   <code>volume</code></p>
 
-  <p>Sixteen nouns. Four types come out the other end.</p>
+  <p>Sixteen nouns. Six types come out the other end &mdash; and two of those six are not on this
+  list at all. Step 4 explains how they got in.</p>
 
   <h2 id="step3-filter-the-nouns"><span class="num">03</span> Step 3 &mdash; Filter the nouns</h2>
 
@@ -133,21 +134,43 @@
 
   <h2 id="step4-one-responsibility-each"><span class="num">04</span> Step 4 &mdash; One responsibility each</h2>
 
+  <p>Every <strong>type</strong> gets exactly one sentence, in the first person &mdash; class,
+  interface or enum alike. Attributes, out-of-scope nouns and noise get nothing. Two uses of
+  &ldquo;and&rdquo; means two types.</p>
+
   <div class="table-wrap">
   <table>
-    <thead><tr><th>Type</th><th>&ldquo;I am&hellip;&rdquo; / &ldquo;I&hellip;&rdquo;</th></tr></thead>
+    <thead><tr><th>Type</th><th>Kind</th><th>&ldquo;I am&hellip;&rdquo; / &ldquo;I&hellip;&rdquo;</th></tr></thead>
     <tbody>
-      <tr><td><code>Song</code></td><td>I am one song, identified by my title and my artist.</td></tr>
-      <tr><td><code>PlayQueue</code></td><td>I hold an ordered line of songs and hand out the next one to play.</td></tr>
-      <tr><td><code>Genre</code></td><td>I am one of a fixed set of genres, and I know my label and my energy.</td></tr>
-      <tr><td><code>Shuffler</code></td><td>I reorder a list of songs.</td></tr>
-      <tr><td><code>RandomShuffler</code></td><td>I reorder a list of songs uniformly at random.</td></tr>
+      <tr><td><code>Song</code></td><td>class</td><td>I am one song, identified by my title and my artist.</td></tr>
+      <tr><td><code>PlayQueue</code></td><td>class</td><td>I hold an ordered line of songs and hand out the next one to play.</td></tr>
+      <tr><td><code>Genre</code></td><td>enum</td><td>I am one of a fixed set of genres, and I know my label and my energy.</td></tr>
+      <tr><td><code>Genre.Energy</code></td><td>enum</td><td>I am how much energy a genre tends to have.</td></tr>
+      <tr><td><code>Shuffler</code></td><td>interface</td><td>I reorder a list of songs.</td></tr>
+      <tr><td><code>RandomShuffler</code></td><td>class</td><td>I reorder a list of songs uniformly at random.</td></tr>
     </tbody>
   </table>
   </div>
 
   <p>Compare these to the deck&rsquo;s sentences and notice they are the <em>same sentences</em> with
   the nouns swapped. That is the first sign you are learning a method rather than a domain.</p>
+
+  <div class="callout callout-key">
+    <span class="label">Two of these were never nouns</span>
+    <p>Check the step 2 list: neither <code>RandomShuffler</code> nor <code>Energy</code> is on it.
+    They arrived by different routes, and both routes are normal.</p>
+    <p><code>RandomShuffler</code> exists because step 3 decided shuffling needed an
+    <em>interface</em>, and an interface with no implementation does nothing. Every interface drags
+    at least one concrete type in behind it.</p>
+    <p><code>Energy</code> is less innocent. Nobody asked for it &mdash; step 1 said a song needs
+    title, artist, genre and length, full stop. I invented it so <code>Genre</code> would carry data
+    the way <code>Suit</code> does. Writing its sentence is what exposes it: once the type has to
+    justify itself out loud, &ldquo;I am how much energy a genre tends to have&rdquo; immediately
+    raises the question of who asked. See the critique.</p>
+    <p>Step 4 can also <em>add</em> a type: when a sentence needs two &ldquo;and&rdquo;s, you split,
+    and the design gains a type that did not exist when step 3 ended. The step is a test, and tests
+    are allowed to fail.</p>
+  </div>
 
   <h2 id="step5-find-the-relationships"><span class="num">05</span> Step 5 &mdash; Find the relationships</h2>
 
@@ -465,6 +488,14 @@ library still   : 6 songs  &lt;-- aggregation, not
         <td>A 4-minute studio cut and a 9-minute live version are &ldquo;the same song&rdquo;. Fine for
         a queue; wrong the moment you need to not play the same recording twice.</td>
         <td>Module 01, equals and hashCode</td>
+      </tr>
+      <tr>
+        <td><code>Genre.Energy</code> was never asked for</td>
+        <td>Step 1 said a song needs title, artist, genre and length. I added energy because it made
+        <code>Genre</code> look more like <code>Suit</code> &mdash; which is a reason about my
+        example, not about the system. Inventing state nobody requested is the cheapest way to grow
+        a design you then have to maintain.</td>
+        <td>Module 03, when not to make a class</td>
       </tr>
       <tr>
         <td><code>artist</code> is a bare <code>String</code></td>
