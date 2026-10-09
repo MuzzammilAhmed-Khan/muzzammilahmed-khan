@@ -552,15 +552,75 @@ library still   : 6 songs  &lt;-- aggregation, not
     looking at it. You judge it against what the system was asked to do.</p>
   </div>
 
-  <div class="callout callout-warn">
-    <span class="label">The cheapest smell to check for</span>
-    <p><strong>State that nothing reads is a question, not a feature.</strong></p>
-    <p>In this design <code>energy()</code> is never called, <code>label()</code> is never called,
-    and nothing ever reads a song&rsquo;s genre at all &mdash; <code>Song.toString()</code> prints
-    title, artist and duration. The data is written and never looked at.</p>
-    <p>Catching this needs no design judgement at all. Grep for the getter and see whether anyone
-    calls it.</p>
+  <h3>Two questions, not one</h3>
+
+  <p>Every piece of state in a design faces two separate questions. They are very easy to collapse
+  into a single one, and they can disagree:</p>
+
+  <ul>
+    <li><strong>Is it used?</strong> &mdash; grep for the getter. Mechanical; needs no judgement.</li>
+    <li><strong>Was it asked for?</strong> &mdash; check it against step 1. Needs judgement.</li>
+  </ul>
+
+  <p>Five accessors from this design, against the scope written down in step 1:</p>
+
+  <div class="table-wrap">
+  <table class="compare">
+    <thead><tr><th>Accessor</th><th>Used?</th><th>Asked for?</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td><code>Song.duration()</code></td><td>yes &mdash; <code>Song.toString()</code></td><td>yes &mdash; &ldquo;print a song readably&rdquo;</td><td class="v-same">keep</td></tr>
+      <tr><td><code>PlayQueue.totalSeconds()</code></td><td>only the demo</td><td>yes &mdash; &ldquo;how long that is&rdquo;</td><td class="v-same">keep</td></tr>
+      <tr><td><code>Song.genre()</code></td><td>no</td><td>yes &mdash; a song knows its genre</td><td class="v-same">flag, do not delete</td></tr>
+      <tr class="row-diff"><td><code>Genre.label()</code></td><td>no</td><td>no</td><td class="v-diff">delete</td></tr>
+      <tr class="row-diff"><td><code>Genre.energy()</code></td><td>no</td><td>no</td><td class="v-diff">delete</td></tr>
+    </tbody>
+  </table>
   </div>
+
+  <p><strong>The demo does not count.</strong> <code>PlayQueueDemo</code> is a harness, not the
+  product. Nothing in the system calls <code>totalSeconds()</code>, so question one is really
+  &ldquo;no&rdquo; &mdash; it survives purely because step 1 asked for it. A demo call is evidence
+  that something works, never evidence that it is needed.</p>
+
+  <p><strong>Asked for but unread is a flag, not a crime.</strong> <code>Song.genre()</code> is
+  stored on every song and read by nothing, yet step 1 did ask for it. So the question it raises is
+  aimed at the requirement, not the code: a song knows its genre <em>for what?</em> Either a
+  feature is missing or that requirement should never have been written. Raise it; do not delete
+  it.</p>
+
+  <div class="callout callout-key">
+    <span class="label">Grep is the screen; requirements are the verdict</span>
+    <p>Grep alone condemns three of those five &mdash; and two of the three are innocent. Grep hands
+    you suspects; step 1 decides guilt.</p>
+    <p>Which is the concrete price of skipping step 1. Without requirements written down you cannot
+    answer the second question at all, so you are left holding only the screen &mdash; and the
+    screen convicts the innocent.</p>
+  </div>
+
+  <h3>What Genre should actually be, today</h3>
+
+  <p>Both of <code>Genre</code>&rsquo;s fields fail both questions. So under the requirements as
+  written, the honest version of the entire type is:</p>
+
+  <div class="code-block">
+    <div class="code-head"><span class="fname">Genre.java &mdash; what the requirements actually pay for</span><span class="spacer"></span></div>
+<pre><code class="language-java">public enum Genre { POP, ROCK, HIP_HOP, JAZZ, CLASSICAL, LOFI }</code></pre>
+  </div>
+
+  <p>Notice exactly what survived: <code>Genre</code> itself. Step 1 did ask that a song know its
+  genre, and a closed set is still the right shape for one. <strong>The type is justified; its
+  contents are not.</strong> Three decisions, not one.</p>
+
+  <p>And each field has its own flip:</p>
+
+  <ul>
+    <li><code>label()</code> &mdash; <em>&ldquo;show the genre under the song title in the
+    player.&rdquo;</em> <code>HIP_HOP</code> is not how you show a genre to a human, so the label
+    earns its place at once.</li>
+    <li><code>Energy</code> &mdash; <em>&ldquo;let me build a workout mix.&rdquo;</em></li>
+  </ul>
+
+  <p>Same enum, same six constants, opposite verdict &mdash; twice, for two different reasons.</p>
 
   <h2 id="the-two-designs-side-by-side"><span class="num">10</span> The two designs, side by side</h2>
 

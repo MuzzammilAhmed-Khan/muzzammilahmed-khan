@@ -134,6 +134,8 @@ arrives. Each one is a ready-made drill.
 | Music queue | `Song.equals` ignores duration — studio and live cuts collide | 01 — equals and hashCode |
 | Music queue | `artist` is a bare `String` — "The Beatles" ≠ "Beatles" | 03 — class vs attribute |
 | Music queue | `Genre.Energy` was invented, not requested — state nobody asked for | 03 — when not to make a class |
+| Music queue | `Genre.label()` is unread and unrequested — same bucket as `Energy`; today `Genre` should be a bare enum | 03 — when not to make a class |
+| Music queue | `Song.genre()` is stored and never read — the requirement "a song knows its genre" is underspecified | 03 — clarifying questions |
 | Music queue | `Shuffler` written twice, once per domain — one `Shuffler<T>` should serve both | 01 — generics |
 | Music queue | `playNext()` removes from the front of an `ArrayList`, O(n) | 01 — collections (`ArrayDeque`) |
 | Music queue | `songs()` returns an unmodifiable *view*, not a copy | 01 — immutability |
